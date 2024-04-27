@@ -22,6 +22,7 @@ import re
 import sys
 import time
 import zlib
+from http import cookiejar
 from cgi import parse_header
 from collections import OrderedDict
 from io import BytesIO, StringIO
@@ -112,7 +113,7 @@ def adv_get(url, post=None, timeout=None, *args, **kwargs):
     }
 
 
-def custom_opener(follow=None, policy=None, force_min=None, force_max=None):
+def custom_opener(follow=None, policy=None, force_min=None, force_max=None, cookie_jar = None):
     # as per urllib2 source code, these Handelers are added first
     # *unless* one of the custom handlers inherits from one of them
     #
@@ -130,10 +131,14 @@ def custom_opener(follow=None, policy=None, force_min=None, force_max=None):
     # http_error_* are run until sth is returned (other than None). If they all
     # return nothing, a python error is raised
 
+    jar = None
+    if cookie_jar is not None:
+        jar = cookiejar.MozillaCookieJar(cookie_jar)
+        jar.load(cookie_jar)
     handlers = [
         #DebugHandler(),
         SizeLimitHandler(500*1024), # 500KiB
-        HTTPCookieProcessor(),
+        HTTPCookieProcessor(jar),
         GZIPHandler(),
         HTTPAllRedirectHandler(),
         HTTPEquivHandler(),

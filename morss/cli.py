@@ -60,6 +60,7 @@ def cli_app():
     group.add_argument('--nolink', action='store_true', help='drop links, but keeps links\' inner text')
     group.add_argument('--noref', action='store_true', help='drop items\' link')
     group.add_argument('--silent', action='store_true', help='don\'t output the final RSS (useless on its own, but can be nice when debugging)')
+    group.add_argument('--cookie-jar', action='store', help='Use a cookie jar for https requests')
 
     options = Options(vars(parser.parse_args()))
     url = options.url
